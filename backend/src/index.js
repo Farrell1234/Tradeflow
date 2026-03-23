@@ -45,7 +45,7 @@ if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../../frontend/dist');
   app.use(express.static(distPath));
   // SPA fallback — all non-API routes return index.html
-  app.get('*', (req, res) => res.sendFile(path.join(distPath, 'index.html')));
+  app.get(/.*/, (req, res) => res.sendFile(path.join(distPath, 'index.html')));
 }
 
 // ── Midnight cron — reset daily P&L and kill switches ─────────────────
