@@ -35,7 +35,7 @@ router.post('/signup', async (req, res) => {
     if (err.code === '23505') { // unique violation
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
-    console.error('[auth/signup]', err.message);
+    console.error('[auth/signup]', err.message, err.code, err.stack);
     res.status(500).json({ error: 'Failed to create account' });
   }
 });
