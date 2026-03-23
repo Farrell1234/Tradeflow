@@ -4,12 +4,16 @@ import { useToast } from '../components/Toast';
 import { useTheme } from '../context/ThemeContext';
 import RobotLogo from '../components/RobotLogo';
 
-const api = (method, path, body) =>
-  fetch(path, {
+const api = (method, path, body) => {
+  const token = localStorage.getItem('tf_token');
+  const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+  if (body) headers['Content-Type'] = 'application/json';
+  return fetch(path, {
     method,
-    headers: body ? { 'Content-Type': 'application/json' } : {},
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   }).then(r => r.json());
+};
 
 export default function Settings() {
   const navigate = useNavigate();
