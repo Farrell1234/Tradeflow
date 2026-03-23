@@ -95,7 +95,19 @@ async function migrate() {
       UNIQUE (user_id)
     )`,
 
-    // 006 — indexes
+    // 006 — pine_scripts table
+    `CREATE TABLE IF NOT EXISTS pine_scripts (
+      id           SERIAL PRIMARY KEY,
+      algo_id      INTEGER REFERENCES algos(id) ON DELETE SET NULL,
+      filename     TEXT,
+      content      TEXT,
+      analysis     JSONB,
+      final_config JSONB,
+      alert_script TEXT,
+      created_at   TIMESTAMPTZ DEFAULT NOW()
+    )`,
+
+    // 007 — indexes
     `CREATE INDEX IF NOT EXISTS idx_algos_user_id ON algos(user_id)`,
     `CREATE INDEX IF NOT EXISTS idx_signal_log_algo_id ON signal_log(algo_id)`,
     `CREATE INDEX IF NOT EXISTS idx_signal_log_received_at ON signal_log(received_at DESC)`,
