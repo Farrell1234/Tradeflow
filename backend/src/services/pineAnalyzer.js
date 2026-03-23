@@ -1,8 +1,8 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const settingsService = require('./settingsService');
 
-async function _getClient() {
-  const s = await settingsService.getSettings();
+async function _getClient(userId) {
+  const s = await settingsService.getSettings(userId);
   if (!s.anthropic_api_key) throw new Error('Anthropic API key not configured. Go to Settings to add it.');
   return new Anthropic({ apiKey: s.anthropic_api_key });
 }
@@ -91,8 +91,8 @@ function stripCodeFences(text) {
   return text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
 }
 
-async function analyzeScript(scriptContent) {
-  const client = await _getClient();
+async function analyzeScript(scriptContent, userId) {
+  const client = await _getClient(userId);
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 2048,
@@ -130,8 +130,8 @@ Rules:
 - If the script already has alertcondition() calls, keep them AND add the new TradeFlow ones at the end.
 - Return ONLY the complete modified Pine Script — no explanation, no markdown, no code fences. Just the raw Pine Script code.`;
 
-async function generateAlertScript(originalContent, analysis) {
-  const client = await _getClient();
+async function generateAlertScript(originalContent, analysis, userId) {
+  const client = await _getClient(userId);
   const buyJson  = JSON.stringify(analysis.buyAlertJson);
   const sellJson = JSON.stringify(analysis.sellAlertJson);
 

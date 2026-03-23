@@ -24,7 +24,7 @@ router.post('/analyze', requireActive, async (req, res) => {
   }
 
   try {
-    const analysis = await analyzeScript(content);
+    const analysis = await analyzeScript(content, req.user.id);
     const result = await db.query(
       `INSERT INTO pine_scripts (algo_id, filename, content, analysis)
        VALUES ($1, $2, $3, $4) RETURNING id`,
@@ -72,7 +72,7 @@ router.post('/:scriptId/alert-script', requireActive, async (req, res) => {
       return res.json({ alertScript: rows[0].alert_script });
     }
 
-    const alertScript = await generateAlertScript(rows[0].content, rows[0].analysis);
+    const alertScript = await generateAlertScript(rows[0].content, rows[0].analysis, req.user.id);
     await db.query(
       `UPDATE pine_scripts SET alert_script = $1 WHERE id = $2`,
       [alertScript, req.params.scriptId]
